@@ -1,0 +1,344 @@
+.admin-dashboard {
+  min-height: 100vh;
+  background-color: #f4f4f4;
+  padding: 2rem 1rem;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  // Header
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #003366;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #FFD700;
+
+    .header-left {
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        margin: 0;
+      }
+    }
+
+    .logout-button {
+      border-color: #f44336 !important;
+      color: #f44336 !important;
+      font-weight: 600;
+
+      mat-icon {
+        margin-right: 8px;
+      }
+
+      &:hover {
+        background-color: #f44336 !important;
+        color: white !important;
+      }
+    }
+  }
+
+  // Cards
+  mat-card {
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+
+    mat-card-header {
+      margin-bottom: 1.5rem;
+      padding: 1.5rem 1.5rem 0;
+      background-color: #003366;
+      color: white;
+      margin: -16px -16px 1.5rem;
+      border-radius: 12px 12px 0 0;
+
+      mat-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: white;
+      }
+    }
+  }
+
+  // Form Styles
+  .service-form {
+    .full-width {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    mat-form-field {
+      mat-icon[matPrefix] {
+        margin-right: 0.5rem;
+        color: #667eea;
+      }
+    }
+
+    // File Upload Section
+    .file-upload-section {
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 2px dashed #ddd;
+
+      .file-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 1rem;
+
+        mat-icon {
+          color: #667eea;
+        }
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .upload-button {
+        margin-bottom: 0.5rem;
+      }
+
+      .file-hint {
+        font-size: 0.85rem;
+        color: #666;
+        margin: 0.5rem 0 0 0;
+      }
+
+      // Image Preview
+      .image-preview {
+        position: relative;
+        margin-top: 1rem;
+        max-width: 300px;
+
+        img {
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-preview {
+          position: absolute;
+          top: -10px;
+          right: -10px;
+          background: white;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+
+    // Form Actions
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+
+      button {
+        min-width: 120px;
+
+        mat-spinner {
+          display: inline-block;
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+
+  // Services Table
+  .list-card {
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: #666;
+
+      mat-spinner {
+        margin-bottom: 1rem;
+      }
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: #999;
+
+      mat-icon {
+        font-size: 4rem;
+        width: 4rem;
+        height: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      p {
+        font-size: 1.1rem;
+      }
+    }
+
+    .table-container {
+      overflow-x: auto;
+
+      .services-table {
+        width: 100%;
+        background: white;
+
+        th {
+          font-weight: 600;
+          color: #555;
+          background: #f8f9fa;
+        }
+
+        .service-photo {
+          width: 60px;
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #f0f0f0;
+          border-radius: 8px;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          mat-icon {
+            color: #999;
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+          }
+        }
+
+        .description-text {
+          display: block;
+          max-width: 300px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .price-tag {
+          display: inline-block;
+          padding: 0.4rem 0.8rem;
+          background: #e8f5e9;
+          color: #2e7d32;
+          border-radius: 20px;
+          font-weight: 600;
+        }
+
+        .action-buttons {
+          display: flex;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
+
+  // Tabs
+  .admin-tabs {
+    margin-bottom: 2rem;
+
+    .tab-content {
+      padding-top: 2rem;
+    }
+  }
+
+  // Feedbacks Card
+  .feedbacks-card {
+    .feedbacks-table {
+      .feedback-text {
+        max-width: 300px;
+        white-space: normal;
+        line-height: 1.4;
+        font-size: 0.95rem;
+      }
+
+      .stars {
+        color: #FFD700;
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+      }
+
+      mat-chip {
+        font-size: 0.85rem;
+        font-weight: 600;
+
+        &.approved {
+          background-color: #4caf50 !important;
+          color: white !important;
+        }
+
+        &.pending {
+          background-color: #ff9800 !important;
+          color: white !important;
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 1rem 0.5rem;
+
+    .dashboard-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .service-form {
+      .form-actions {
+        flex-direction: column;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+
+    .services-table {
+      font-size: 0.85rem;
+
+      .description-text {
+        max-width: 150px;
+      }
+    }
+  }
+}
+
+// Snackbar Styles (Global)
+::ng-deep {
+  .snackbar-success {
+    background: #4caf50 !important;
+    color: white !important;
+  }
+
+  .snackbar-error {
+    background: #f44336 !important;
+    color: white !important;
+  }
+}

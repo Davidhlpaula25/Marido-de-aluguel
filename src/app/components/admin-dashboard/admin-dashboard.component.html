@@ -1,0 +1,375 @@
+<div class="admin-dashboard">
+  <div class="container">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1>Painel Administrativo</h1>
+        <p class="subtitle">Gerencie os serviços do Marido de Aluguel</p>
+      </div>
+      <button 
+        mat-stroked-button 
+        color="warn"
+        (click)="logout()"
+        class="logout-button">
+        <mat-icon>logout</mat-icon>
+        Sair
+      </button>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <mat-tab-group class="admin-tabs">
+      <!-- Tab: Serviços -->
+      <mat-tab label="Serviços">
+        <div class="tab-content">
+
+    <!-- Service Form Card -->
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ editingServiceId ? 'Editar Serviço' : 'Adicionar Novo Serviço' }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="service-form">
+          <!-- Title Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título do Serviço</mat-label>
+            <input 
+              matInput 
+              formControlName="title" 
+              placeholder="Ex: Instalação de Chuveiro"
+              maxlength="100">
+            <mat-icon matPrefix>build</mat-icon>
+            <mat-error *ngIf="serviceForm.get('title')?.hasError('required')">
+              Título é obrigatório
+            </mat-error>
+            <mat-error *ngIf="serviceForm.get('title')?.hasError('minlength')">
+              Mínimo de 3 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Description Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrição</mat-label>
+            <textarea 
+              matInput 
+              formControlName="description" 
+              placeholder="Descreva os detalhes do serviço..."
+              rows="4"
+              maxlength="500">
+            </textarea>
+            <mat-icon matPrefix>description</mat-icon>
+            <mat-error *ngIf="serviceForm.get('description')?.hasError('required')">
+              Descrição é obrigatória
+            </mat-error>
+            <mat-error *ngIf="serviceForm.get('description')?.hasError('minlength')">
+              Mínimo de 10 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Price Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Preço (R$)</mat-label>
+            <input 
+              matInput 
+              type="number" 
+              formControlName="price" 
+              placeholder="0.00"
+              step="0.01"
+              min="0">
+            <mat-icon matPrefix>attach_money</mat-icon>
+            <span matTextPrefix>R$&nbsp;</span>
+            <mat-error *ngIf="serviceForm.get('price')?.hasError('required')">
+              Preço é obrigatório
+            </mat-error>
+            <mat-error *ngIf="serviceForm.get('price')?.hasError('min')">
+              Preço deve ser maior que zero
+            </mat-error>
+          </mat-form-field>
+
+          <!-- File Upload -->
+          <div class="file-upload-section">
+            <label class="file-label">
+              <mat-icon>image</mat-icon>
+              Foto do Serviço (opcional)
+            </label>
+            
+            <input 
+              type="file" 
+              #fileInput
+              (change)="onFileSelected($event)"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
+              class="file-input">
+
+            <button 
+              type="button" 
+              mat-stroked-button 
+              color="primary"
+              (click)="fileInput.click()"
+              class="upload-button">
+              <mat-icon>cloud_upload</mat-icon>
+              Selecionar Imagem
+            </button>
+
+            <p class="file-hint">JPG, PNG ou WEBP (máx. 5MB)</p>
+
+            <!-- Image Preview -->
+            <div *ngIf="imagePreview" class="image-preview">
+              <img [src]="imagePreview" alt="Preview">
+              <button 
+                type="button" 
+                mat-icon-button 
+                color="warn"
+                (click)="imagePreview = null; selectedFile = null; fileInput.value = ''"
+                class="remove-preview">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button 
+              type="button" 
+              mat-stroked-button 
+              (click)="resetForm()"
+              [disabled]="isSubmitting">
+              Cancelar
+            </button>
+            
+            <button 
+              type="submit" 
+              mat-raised-button 
+              color="primary"
+              [disabled]="serviceForm.invalid || isSubmitting">
+              <mat-spinner *ngIf="isSubmitting" diameter="20"></mat-spinner>
+              <span *ngIf="!isSubmitting">
+                {{ editingServiceId ? 'Atualizar' : 'Adicionar' }} Serviço
+              </span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Services List -->
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>Serviços Cadastrados</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner></mat-spinner>
+          <p>Carregando serviços...</p>
+        </div>
+
+        <div *ngIf="!isLoading && services.length === 0" class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <p>Nenhum serviço cadastrado ainda</p>
+        </div>
+
+        <div *ngIf="!isLoading && services.length > 0" class="table-container">
+          <table mat-table [dataSource]="services" class="services-table">
+            
+            <!-- Photo Column -->
+            <ng-container matColumnDef="photo">
+              <th mat-header-cell *matHeaderCellDef>Foto</th>
+              <td mat-cell *matCellDef="let service">
+                <div class="service-photo">
+                  <img 
+                    *ngIf="service.photo_url" 
+                    [src]="service.photo_url" 
+                    [alt]="service.title">
+                  <mat-icon *ngIf="!service.photo_url">image_not_supported</mat-icon>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Title Column -->
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef>Título</th>
+              <td mat-cell *matCellDef="let service">
+                <strong>{{ service.title }}</strong>
+              </td>
+            </ng-container>
+
+            <!-- Description Column -->
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Descrição</th>
+              <td mat-cell *matCellDef="let service">
+                <span class="description-text">{{ service.description }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Price Column -->
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Preço</th>
+              <td mat-cell *matCellDef="let service">
+                <span class="price-tag">{{ formatPrice(service.price) }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Active Status Column -->
+            <ng-container matColumnDef="active">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let service">
+                <mat-slide-toggle
+                  [checked]="service.active"
+                  (change)="toggleServiceStatus(service)"
+                  color="primary">
+                  {{ service.active ? 'Ativo' : 'Inativo' }}
+                </mat-slide-toggle>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Ações</th>
+              <td mat-cell *matCellDef="let service">
+                <div class="action-buttons">
+                  <button 
+                    mat-icon-button 
+                    color="primary"
+                    (click)="editService(service)"
+                    matTooltip="Editar">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  
+                  <button 
+                    mat-icon-button 
+                    color="warn"
+                    (click)="deleteService(service)"
+                    matTooltip="Deletar">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Tab: Avaliações -->
+      <mat-tab label="Avaliações">
+        <div class="tab-content">
+          <mat-card class="feedbacks-card">
+            <mat-card-header>
+              <mat-card-title>
+                Gerenciar Avaliações de Clientes
+              </mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+              <!-- Loading State -->
+              <div *ngIf="isLoadingFeedbacks" class="loading-container">
+                <mat-spinner diameter="50"></mat-spinner>
+                <p>Carregando avaliações...</p>
+              </div>
+
+              <!-- Empty State -->
+              <div *ngIf="!isLoadingFeedbacks && feedbacks.length === 0" class="empty-state">
+                <mat-icon>rate_review</mat-icon>
+                <p>Nenhuma avaliação recebida ainda</p>
+              </div>
+
+              <!-- Feedbacks Table -->
+              <div *ngIf="!isLoadingFeedbacks && feedbacks.length > 0" class="table-container">
+                <table mat-table [dataSource]="feedbacks" class="feedbacks-table">
+                  
+                  <!-- Client Name Column -->
+                  <ng-container matColumnDef="client">
+                    <th mat-header-cell *matHeaderCellDef>Cliente</th>
+                    <td mat-cell *matCellDef="let feedback">
+                      <strong>{{ feedback.client_name }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <!-- Comment Column -->
+                  <ng-container matColumnDef="text">
+                    <th mat-header-cell *matHeaderCellDef>Comentário</th>
+                    <td mat-cell *matCellDef="let feedback">
+                      <div class="feedback-text">{{ feedback.text }}</div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Rating Column -->
+                  <ng-container matColumnDef="rating">
+                    <th mat-header-cell *matHeaderCellDef>Avaliação</th>
+                    <td mat-cell *matCellDef="let feedback">
+                      <span class="stars">{{ getStars(feedback.rating) }}</span>
+                    </td>
+                  </ng-container>
+
+                  <!-- Status Column -->
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let feedback">
+                      <mat-chip 
+                        [class.approved]="feedback.is_approved"
+                        [class.pending]="!feedback.is_approved">
+                        {{ feedback.is_approved ? 'Aprovado' : 'Pendente' }}
+                      </mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <!-- Date Column -->
+                  <ng-container matColumnDef="date">
+                    <th mat-header-cell *matHeaderCellDef>Data</th>
+                    <td mat-cell *matCellDef="let feedback">
+                      <small>{{ formatDate(feedback.created_at!) }}</small>
+                    </td>
+                  </ng-container>
+
+                  <!-- Actions Column -->
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Ações</th>
+                    <td mat-cell *matCellDef="let feedback">
+                      <div class="action-buttons">
+                        <button 
+                          *ngIf="!feedback.is_approved"
+                          mat-icon-button 
+                          color="primary"
+                          (click)="approveFeedback(feedback, true)"
+                          matTooltip="Aprovar">
+                          <mat-icon>check_circle</mat-icon>
+                        </button>
+                        
+                        <button 
+                          *ngIf="feedback.is_approved"
+                          mat-icon-button 
+                          color="warn"
+                          (click)="approveFeedback(feedback, false)"
+                          matTooltip="Desaprovar">
+                          <mat-icon>cancel</mat-icon>
+                        </button>
+                        
+                        <button 
+                          mat-icon-button 
+                          color="warn"
+                          (click)="deleteFeedback(feedback)"
+                          matTooltip="Deletar">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="feedbackColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: feedbackColumns;"></tr>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

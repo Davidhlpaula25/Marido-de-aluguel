@@ -1,0 +1,78 @@
+<!-- Hero Section -->
+<div class="hero">
+  <div class="hero-content">
+    <h1>Precisa de um reparo rápido?</h1>
+    <p>Elétrica, Hidráulica, Montagem de Móveis e muito mais.</p>
+  </div>
+</div>
+
+<!-- Services Section -->
+<div class="container">
+  <div class="center-title">
+    <h2 class="section-title">Serviços Populares</h2>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <mat-icon class="loading-icon">build_circle</mat-icon>
+    <p>Carregando serviços...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && services.length === 0" class="empty-state">
+    <mat-icon>construction</mat-icon>
+    <p>Nenhum serviço disponível no momento</p>
+  </div>
+
+  <!-- Services Grid -->
+  <div *ngIf="!isLoading && services.length > 0" class="services-grid">
+    <div *ngFor="let service of services" class="card">
+      <div class="card-img">
+        <img *ngIf="service.photo_url" [src]="service.photo_url" [alt]="service.title">
+        <div *ngIf="!service.photo_url" class="no-image">
+          <mat-icon>build</mat-icon>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <h3 class="card-title">{{ service.title }}</h3>
+        <span class="card-price">{{ formatPrice(service.price) }}</span>
+        <p class="card-desc">{{ service.description }}</p>
+        
+        <button 
+          mat-raised-button 
+          class="btn-wpp"
+          (click)="openWhatsApp(service)">
+          <mat-icon>chat</mat-icon>
+          Chamar no Zap
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feedbacks Section -->
+<div class="feedback-section" *ngIf="feedbacks.length > 0">
+  <div class="container">
+    <div class="center-title">
+      <h2 class="section-title">O que dizem nossos clientes</h2>
+    </div>
+
+    <div class="testimonials-grid">
+      <div *ngFor="let feedback of feedbacks" class="testimonial">
+        <div class="stars">{{ getStars(feedback.rating) }}</div>
+        <p class="feedback-text">"{{ feedback.text }}"</p>
+        <small class="feedback-author">— {{ feedback.client_name }}</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Action Button -->
+<button 
+  class="fab-feedback" 
+  mat-fab 
+  aria-label="Avaliar serviço"
+  (click)="openFeedbackDialog()">
+  <mat-icon>star</mat-icon>
+</button>

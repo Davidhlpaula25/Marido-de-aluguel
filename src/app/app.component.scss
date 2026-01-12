@@ -1,0 +1,79 @@
+// Main Header Styles
+.main-header {
+  background-color: #003366;
+  color: white;
+  padding: 15px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #FFD700;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  .btn-admin-login {
+    border-color: #FFD700 !important;
+    color: #FFD700 !important;
+    padding: 8px 20px !important;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    mat-icon {
+      margin-right: 8px;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background-color: #FFD700 !important;
+      color: #003366 !important;
+    }
+  }
+}
+
+// Main Content
+main {
+  min-height: calc(100vh - 58px);
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .main-header {
+    .header-content {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+    }
+  }
+}
