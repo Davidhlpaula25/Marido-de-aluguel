@@ -26,7 +26,7 @@ git push -u origin main
 
 ## Passo 2: Configurar Variáveis de Ambiente na Vercel
 
-⚠️ **IMPORTANTE**: Não commite os arquivos `environment.ts` e `environment.prod.ts` com suas credenciais reais!
+⚠️ **IMPORTANTE**: O projeto gera automaticamente os arquivos de environment durante o build.
 
 Antes de fazer o deploy, você precisa:
 
@@ -34,10 +34,19 @@ Antes de fazer o deploy, você precisa:
 2. Importe seu repositório do GitHub
 3. Na seção **Environment Variables**, adicione:
 
+**Nome das Variáveis** (exatamente assim):
+```
+SUPABASE_URL
+SUPABASE_KEY
+```
+
+**Valores** (suas credenciais do Supabase):
 ```
 SUPABASE_URL=https://bznpqlvdrendayeyanxe.supabase.co
 SUPABASE_KEY=sb_publishable_jpryfpXnwJcl1mh7eNNIGA_-n5dNWYA
 ```
+
+⚠️ Aplique para: **Production**, **Preview** e **Development**
 
 ## Passo 3: Deploy Automático
 
